@@ -11,7 +11,7 @@ import (
 	"path/filepath"
 )
 
-func BlurImage(img image.Image, blurIntensity int, outputsPath string) {
+func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
 	// Ensure the output directory exists
 	outputDir := filepath.Dir(outputsPath)
 	if _, err := os.Stat(outputDir); os.IsNotExist(err) {

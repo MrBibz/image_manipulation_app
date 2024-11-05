@@ -10,8 +10,13 @@ func main() {
 	const IMAGEPATH string = "../images/bread.jpg"
 	const OUTPUTSPATH string = "./go_outputs/"
 
-	// Test BlurImage
-	fmt.Println("\nTest BlurImage : ")
+	// Test BlurFilter
+	fmt.Println("\nTest BlurFilter : ")
 	img := bf.ReadImage(IMAGEPATH)
-	imf.BlurImage(img, 0, OUTPUTSPATH+"blurred_bread.jpg")
+	imf.BlurFilter(img, 3, OUTPUTSPATH+"blurred_bread.jpg")
+
+	// Test GrayscaleFilter
+	fmt.Println("\nTest GrayscaleFilter : ")
+	img = bf.ReadImage(IMAGEPATH)
+	imf.GrayscaleFilter(img, 100, OUTPUTSPATH+"grayscale_bread.jpg")
 }
