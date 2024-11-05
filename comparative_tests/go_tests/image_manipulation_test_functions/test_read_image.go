@@ -1,14 +1,15 @@
-package image_manipulation_functions
+package image_manipulation_test_functions
 
 import (
 	"fmt"
+	"image"
 	"image/jpeg"
 	"os"
 )
 
-func GetImageDimensions(imagePath string) (width, height int) {
+func ReadImage(filePath string) (img image.Image) {
 	// Open the image file and check for errors
-	file, err := os.Open(imagePath)
+	file, err := os.Open(filePath)
 	if err != nil {
 		fmt.Println("Error opening file : ", err)
 		return
@@ -22,15 +23,11 @@ func GetImageDimensions(imagePath string) (width, height int) {
 	}(file)
 
 	// Decode the image file and check for errors
-	img, err := jpeg.Decode(file)
+	img, err = jpeg.Decode(file)
 	if err != nil {
 		fmt.Println("Error decoding file : ", err)
 		return
 	}
-
-	// Get the dimensions of the image and return
-	width = img.Bounds().Dx()
-	height = img.Bounds().Dy()
 
 	return
 }
