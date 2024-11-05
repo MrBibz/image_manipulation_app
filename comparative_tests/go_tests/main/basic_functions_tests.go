@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	imf "go_tests/basic_functions_tests"
+	bf "go_tests/basic_functions"
 )
 
 func main() {
@@ -10,15 +10,15 @@ func main() {
 
 	// Test ReadImage
 	fmt.Println("\nTest ReadImage : ")
-	img := imf.ReadImage(IMAGEPATH)
+	img := bf.ReadImage(IMAGEPATH)
 	fmt.Println("Image : ", img)
 
 	// Test GetImageDimensions
 	fmt.Println("\nTest GetImageDimensions : ")
-	width, height := imf.GetImageDimensions(img)
+	width, height := bf.GetImageDimensions(img)
 	fmt.Println("Image dimensions: ", width, "x", height)
 
 	// Test ExtractPixels
 	fmt.Println("\nTest ExtractPixels : ")
-	imf.ExtractPixels(IMAGEPATH)
+	bf.ExtractPixels(IMAGEPATH)
 }
