@@ -1,4 +1,4 @@
-package image_manipulation_test_functions
+package basic_test_functions
 
 import (
 	"image"
