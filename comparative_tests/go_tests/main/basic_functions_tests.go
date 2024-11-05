@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	imf "go_tests/basic_test_functions"
+	imf "go_tests/basic_functions_tests"
 )
 
 func main() {
