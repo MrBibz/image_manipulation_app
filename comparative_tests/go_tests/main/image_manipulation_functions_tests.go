@@ -29,4 +29,9 @@ func main() {
 	fmt.Println("\nTest RotateImage : ")
 	img = bf.ReadImage(IMAGEPATH)
 	imf.RotateImage(img, 90, OUTPUTSPATH+"rotated_bread.jpg")
+
+	// Test ContrastFilter
+	fmt.Println("\nTest ContrastFilter : ")
+	img = bf.ReadImage(IMAGEPATH)
+	imf.ContrastFilter(img, 100, OUTPUTSPATH+"contrast_bread.jpg")
 }

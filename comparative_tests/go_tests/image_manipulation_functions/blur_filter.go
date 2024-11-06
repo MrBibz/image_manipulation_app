@@ -9,7 +9,7 @@ import (
 	"time"
 )
 
-func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
+func BlurFilter(img image.Image, intensity int, outputsPath string) {
 	start := time.Now()
 
 	// Ensure the output directory exists
@@ -25,7 +25,7 @@ func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
 	blurredImage := image.NewRGBA(bounds)
 
 	// Create the blur kernel
-	kernelSize := 2*blurIntensity + 1
+	kernelSize := 2*intensity + 1
 	kernel := make([][]float64, kernelSize)
 	for i := range kernel {
 		kernel[i] = make([]float64, kernelSize)
@@ -35,16 +35,16 @@ func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
 	}
 
 	// Apply the blur filter
-	for y := blurIntensity; y < height-blurIntensity; y++ {
-		for x := blurIntensity; x < width-blurIntensity; x++ {
+	for y := intensity; y < height-intensity; y++ {
+		for x := intensity; x < width-intensity; x++ {
 			var rSum, gSum, bSum float64
 
 			// Apply the kernel
-			for ky := -blurIntensity; ky <= blurIntensity; ky++ {
-				for kx := -blurIntensity; kx <= blurIntensity; kx++ {
+			for ky := -intensity; ky <= intensity; ky++ {
+				for kx := -intensity; kx <= intensity; kx++ {
 					// Get the neighboring pixel
 					pxColor := color.RGBAModel.Convert(img.At(x+kx, y+ky)).(color.RGBA)
-					weight := kernel[ky+blurIntensity][kx+blurIntensity]
+					weight := kernel[ky+intensity][kx+intensity]
 
 					// Add the weighted color to the sum
 					rSum += float64(pxColor.R) * weight
