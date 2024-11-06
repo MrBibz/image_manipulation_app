@@ -32,7 +32,7 @@ func GrayscaleFilter(img image.Image, intensity int, outputsPath string) {
 		for x := 0; x < width; x++ {
 			originalColor := color.RGBAModel.Convert(img.At(x, y)).(color.RGBA)
 
-			// Calculate the grayscale value
+			// Calculate the luminosity of the pixel
 			grayValue := uint8(0.3*float64(originalColor.R) + 0.59*float64(originalColor.G) + 0.11*float64(originalColor.B))
 
 			// Apply the grayscale filter with the intensity (0 = no change, 100 = full grayscale)

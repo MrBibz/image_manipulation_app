@@ -19,4 +19,9 @@ func main() {
 	fmt.Println("\nTest GrayscaleFilter : ")
 	img = bf.ReadImage(IMAGEPATH)
 	imf.GrayscaleFilter(img, 100, OUTPUTSPATH+"grayscale_bread.jpg")
+
+	// Test ResizeImage
+	fmt.Println("\nTest ResizeImage : ")
+	img = bf.ReadImage(IMAGEPATH)
+	imf.ResizeImage(img, 800, 400, OUTPUTSPATH+"resized_bread.jpg")
 }
