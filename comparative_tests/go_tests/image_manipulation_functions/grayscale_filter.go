@@ -5,9 +5,12 @@ import (
 	bft "go_tests/basic_functions"
 	"image"
 	"image/color"
+	"time"
 )
 
 func GrayscaleFilter(img image.Image, intensity int, outputsPath string) {
+	start := time.Now()
+
 	// Ensure the output directory exists
 	if err := EnsureOutputDir(outputsPath); err != nil {
 		fmt.Println(err)
@@ -57,5 +60,6 @@ func GrayscaleFilter(img image.Image, intensity int, outputsPath string) {
 		return
 	}
 
-	fmt.Println("Grayed image saved to:", outputsPath)
+	fmt.Println("Grayed image saved to : ", outputsPath)
+	fmt.Println("Execution time : ", time.Since(start))
 }

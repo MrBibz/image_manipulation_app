@@ -5,9 +5,12 @@ import (
 	bft "go_tests/basic_functions"
 	"image"
 	"image/color"
+	"time"
 )
 
 func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
+	start := time.Now()
+
 	// Ensure the output directory exists
 	if err := EnsureOutputDir(outputsPath); err != nil {
 		fmt.Println(err)
@@ -72,5 +75,6 @@ func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
 		return
 	}
 
-	fmt.Println("Resized image saved to:", outputsPath)
+	fmt.Println("Resized image saved to : ", outputsPath)
+	fmt.Println("Execution time : ", time.Since(start))
 }

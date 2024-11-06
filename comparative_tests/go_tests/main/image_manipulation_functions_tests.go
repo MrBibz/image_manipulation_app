@@ -24,4 +24,9 @@ func main() {
 	fmt.Println("\nTest ResizeImage : ")
 	img = bf.ReadImage(IMAGEPATH)
 	imf.ResizeImage(img, 800, 400, OUTPUTSPATH+"resized_bread.jpg")
+
+	// Test RotateImage
+	fmt.Println("\nTest RotateImage : ")
+	img = bf.ReadImage(IMAGEPATH)
+	imf.RotateImage(img, 90, OUTPUTSPATH+"rotated_bread.jpg")
 }

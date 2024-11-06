@@ -2,13 +2,16 @@ package image_manipulation_functions
 
 import (
 	"fmt"
-	bft "go_tests/basic_functions"
+	bf "go_tests/basic_functions"
 	"image"
 	"image/color"
 	"math"
+	"time"
 )
 
 func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
+	start := time.Now()
+
 	// Ensure the output directory exists
 	if err := EnsureOutputDir(outputsPath); err != nil {
 		fmt.Println(err)
@@ -17,7 +20,7 @@ func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
 
 	// Get the image dimensions
 	bounds := img.Bounds()
-	width, height := bft.GetImageDimensions(img)
+	width, height := bf.GetImageDimensions(img)
 
 	blurredImage := image.NewRGBA(bounds)
 
@@ -73,5 +76,6 @@ func BlurFilter(img image.Image, blurIntensity int, outputsPath string) {
 		return
 	}
 
-	fmt.Println("Blurred image saved to:", outputsPath)
+	fmt.Println("Blurred image saved to : ", outputsPath)
+	fmt.Println("Execution time for : ", time.Since(start))
 }
