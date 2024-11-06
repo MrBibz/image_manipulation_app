@@ -5,20 +5,13 @@ import (
 	bft "go_tests/basic_functions"
 	"image"
 	"image/color"
-	"image/jpeg"
-	"os"
-	"path/filepath"
 )
 
 func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
 	// Ensure the output directory exists
-	outputDir := filepath.Dir(outputsPath)
-	if _, err := os.Stat(outputDir); os.IsNotExist(err) {
-		err := os.MkdirAll(outputDir, os.ModePerm)
-		if err != nil {
-			fmt.Println("Error creating output directory:", err)
-			return
-		}
+	if err := EnsureOutputDir(outputsPath); err != nil {
+		fmt.Println(err)
+		return
 	}
 
 	// Original image dimensions
@@ -67,24 +60,17 @@ func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
 	}
 
 	// Create the output file
-	outputFile, err := os.Create(outputsPath)
+	outputFile, err := CreateOutputFile(outputsPath)
 	if err != nil {
-		fmt.Println("Error creating output file : ", err)
+		fmt.Println(err)
 		return
 	}
-	defer func(outputFile *os.File) {
-		err := outputFile.Close()
-		if err != nil {
-
-		}
-	}(outputFile)
 
 	// Encode the resized image as JPEG and save it to the output file
-	err = jpeg.Encode(outputFile, resizedImage, nil)
-	if err != nil {
-		fmt.Println("Error encoding output file : ", err)
+	if err := SaveImageAsJPEG(outputFile, resizedImage); err != nil {
+		fmt.Println(err)
 		return
 	}
 
-	fmt.Println("Resized image saved to : ", outputsPath)
+	fmt.Println("Resized image saved to:", outputsPath)
 }
