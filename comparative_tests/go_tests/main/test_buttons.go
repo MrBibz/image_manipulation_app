@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-func main() {
+func ButtonsTest() {
 	go func() {
 		// Create a new window
 		window := new(app.Window)
@@ -125,4 +125,9 @@ func draw(window *app.Window) error {
 			os.Exit(0)
 		}
 	}
+}
+
+func main() {
+	fmt.Println("\nTest buttons:")
+	ButtonsTest()
 }
