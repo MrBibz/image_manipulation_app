@@ -1,8 +1,7 @@
-package image_manipulation_functions
+package image_manipulation
 
 import (
 	"fmt"
-	bf "go_tests/basic_functions"
 	"image"
 	"image/color"
 	"math"
@@ -20,7 +19,7 @@ func BlurFilter(img image.Image, intensity int, outputsPath string) {
 
 	// Get the image dimensions
 	bounds := img.Bounds()
-	width, height := bf.GetImageDimensions(img)
+	width, height := GetImageDimensions(img)
 
 	blurredImage := image.NewRGBA(bounds)
 

@@ -1,8 +1,7 @@
-package image_manipulation_functions
+package image_manipulation
 
 import (
 	"fmt"
-	bft "go_tests/basic_functions"
 	"image"
 	"image/color"
 	"time"
@@ -18,7 +17,7 @@ func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
 	}
 
 	// Original image dimensions
-	originalWidth, originalHeight := bft.GetImageDimensions(img)
+	originalWidth, originalHeight := GetImageDimensions(img)
 
 	resizedImage := image.NewRGBA(image.Rect(0, 0, newWidth, newHeight))
 

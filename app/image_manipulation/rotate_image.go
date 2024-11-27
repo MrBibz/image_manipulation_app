@@ -1,8 +1,7 @@
-package image_manipulation_functions
+package image_manipulation
 
 import (
 	"fmt"
-	bf "go_tests/basic_functions"
 	"image"
 	"time"
 )
@@ -17,7 +16,7 @@ func RotateImage(img image.Image, angle int, outputsPath string) {
 	}
 
 	// Get the original image dimensions
-	originalWidth, originalHeight := bf.GetImageDimensions(img)
+	originalWidth, originalHeight := GetImageDimensions(img)
 
 	// Initialisation of the rotated image
 	var rotatedImage *image.RGBA

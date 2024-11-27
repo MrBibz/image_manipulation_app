@@ -1,4 +1,4 @@
-package image_manipulation_functions
+package image_manipulation
 
 import (
 	"fmt"

@@ -1,8 +1,7 @@
-package image_manipulation_functions
+package image_manipulation
 
 import (
 	"fmt"
-	bft "go_tests/basic_functions"
 	"image"
 	"image/color"
 	"time"
@@ -19,7 +18,7 @@ func GrayscaleFilter(img image.Image, intensity int, outputsPath string) {
 
 	// Get the image dimensions
 	bounds := img.Bounds()
-	width, height := bft.GetImageDimensions(img)
+	width, height := GetImageDimensions(img)
 
 	grayedImage := image.NewRGBA(bounds)
 
