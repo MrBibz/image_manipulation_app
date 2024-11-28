@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"app/image_manipulation"
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/layout"
@@ -82,11 +83,25 @@ func MainLoop(w *app.Window) error {
 				showContrastOptions = !showContrastOptions
 			}
 
+			if applyBlurButton.Clicked(gtx) && loadedImage != nil {
+				intensity := int(blurSlider.Value * 100)
+				loadedImage = image_manipulation.BlurFilter(loadedImage, intensity)
+			}
+
+			if applyGrayscaleButton.Clicked(gtx) && loadedImage != nil {
+				intensity := int(grayscaleSlider.Value * 100)
+				loadedImage = image_manipulation.GrayscaleFilter(loadedImage, intensity)
+			}
+
+			if applyContrastButton.Clicked(gtx) && loadedImage != nil {
+				contrastFactor := contrastSlider.Value * 100
+				loadedImage = image_manipulation.ContrastFilter(loadedImage, float64(contrastFactor))
+			}
+
 			layout.Flex{
 				Axis:    layout.Vertical,
 				Spacing: layout.SpaceBetween,
 			}.Layout(gtx,
-				// Top row: Open and Save buttons
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					return layout.Inset{
 						Top:    unit.Dp(25),
@@ -107,7 +122,6 @@ func MainLoop(w *app.Window) error {
 						)
 					})
 				}),
-				// Middle: Display loaded image
 				layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
 					return layout.Inset{
 						Top:    unit.Dp(25),
@@ -124,7 +138,6 @@ func MainLoop(w *app.Window) error {
 						return layout.Dimensions{}
 					})
 				}),
-				// Bottom row: Action buttons
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					return layout.Inset{
 						Top:    unit.Dp(25),
@@ -154,7 +167,6 @@ func MainLoop(w *app.Window) error {
 						)
 					})
 				}),
-				// Show blur options
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					if showBlurOptions {
 						return layout.Flex{
@@ -198,8 +210,6 @@ func MainLoop(w *app.Window) error {
 					}
 					return layout.Dimensions{}
 				}),
-
-				// Show grayscale options
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					if showGrayscaleOptions {
 						return layout.Flex{
@@ -243,8 +253,6 @@ func MainLoop(w *app.Window) error {
 					}
 					return layout.Dimensions{}
 				}),
-
-				// Show contrast options
 				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
 					if showContrastOptions {
 						return layout.Flex{
