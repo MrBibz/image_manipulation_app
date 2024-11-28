@@ -44,6 +44,7 @@ func MainLoop(w *app.Window) error {
 	saveChan := make(chan error)
 
 	var loadedImage image.Image
+	var originalImage image.Image
 
 	for {
 		e := w.Event()
@@ -65,6 +66,7 @@ func MainLoop(w *app.Window) error {
 						img, err := jpeg.Decode(file)
 						if err == nil {
 							loadedImage = img
+							originalImage = img
 						}
 					}
 				}
@@ -83,19 +85,19 @@ func MainLoop(w *app.Window) error {
 				showContrastOptions = !showContrastOptions
 			}
 
-			if applyBlurButton.Clicked(gtx) && loadedImage != nil {
+			if applyBlurButton.Clicked(gtx) && originalImage != nil {
 				intensity := int(blurSlider.Value * 100)
-				loadedImage = image_manipulation.BlurFilter(loadedImage, intensity)
+				loadedImage = image_manipulation.BlurFilter(originalImage, intensity)
 			}
 
-			if applyGrayscaleButton.Clicked(gtx) && loadedImage != nil {
+			if applyGrayscaleButton.Clicked(gtx) && originalImage != nil {
 				intensity := int(grayscaleSlider.Value * 100)
-				loadedImage = image_manipulation.GrayscaleFilter(loadedImage, intensity)
+				loadedImage = image_manipulation.GrayscaleFilter(originalImage, intensity)
 			}
 
-			if applyContrastButton.Clicked(gtx) && loadedImage != nil {
+			if applyContrastButton.Clicked(gtx) && originalImage != nil {
 				contrastFactor := contrastSlider.Value * 100
-				loadedImage = image_manipulation.ContrastFilter(loadedImage, float64(contrastFactor))
+				loadedImage = image_manipulation.ContrastFilter(originalImage, float64(contrastFactor))
 			}
 
 			layout.Flex{
