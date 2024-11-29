@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"app/image_manipulation"
 	"fmt"
 	"gioui.org/layout"
 	"gioui.org/widget"
@@ -30,7 +31,7 @@ func HandleOpenButtonClick(expl *explorer.Explorer, fileChan chan FileResult, op
 	}
 }
 
-func HandleSaveButtonClick(expl *explorer.Explorer, saveChan chan error, saveBtn *widget.Clickable, fileResult FileResult, gtx layout.Context) {
+func HandleSaveButtonClick(expl *explorer.Explorer, saveChan chan error, saveBtn *widget.Clickable, fileResult FileResult, modifiedImage image.Image, gtx layout.Context) {
 	if saveBtn.Clicked(gtx) {
 		go func(fileResult FileResult) {
 			if fileResult.Error != nil {
@@ -45,11 +46,23 @@ func HandleSaveButtonClick(expl *explorer.Explorer, saveChan chan error, saveBtn
 			defer func() {
 				saveChan <- file.Close()
 			}()
-			img := image.NewRGBA(image.Rect(0, 0, 100, 100))
-			if err := jpeg.Encode(file, img, nil); err != nil {
+			if err := jpeg.Encode(file, modifiedImage, nil); err != nil {
 				saveChan <- fmt.Errorf("failed encoding image file: %w", err)
 				return
 			}
 		}(fileResult)
 	}
+}
+
+func ApplyFilters(img image.Image, blurIntensity int, grayscaleIntensity int, contrastFactor float64) image.Image {
+	if blurIntensity > 0 {
+		img = image_manipulation.BlurFilter(img, blurIntensity)
+	}
+	if grayscaleIntensity > 0 {
+		img = image_manipulation.GrayscaleFilter(img, grayscaleIntensity)
+	}
+	if contrastFactor != 0 {
+		img = image_manipulation.ContrastFilter(img, contrastFactor)
+	}
+	return img
 }

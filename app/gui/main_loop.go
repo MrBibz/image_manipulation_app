@@ -1,7 +1,6 @@
 package gui
 
 import (
-	"app/image_manipulation"
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/layout"
@@ -55,7 +54,7 @@ func MainLoop(w *app.Window) error {
 			gtx := app.NewContext(&ops, typ)
 
 			HandleOpenButtonClick(expl, fileChan, &openButton, gtx)
-			HandleSaveButtonClick(expl, saveChan, &saveButton, FileResult{}, gtx)
+			HandleSaveButtonClick(expl, saveChan, &saveButton, FileResult{}, loadedImage, gtx)
 
 			select {
 			case fileResult := <-fileChan:
@@ -85,19 +84,11 @@ func MainLoop(w *app.Window) error {
 				showContrastOptions = !showContrastOptions
 			}
 
-			if applyBlurButton.Clicked(gtx) && originalImage != nil {
-				intensity := int(blurSlider.Value * 100)
-				loadedImage = image_manipulation.BlurFilter(originalImage, intensity)
-			}
-
-			if applyGrayscaleButton.Clicked(gtx) && originalImage != nil {
-				intensity := int(grayscaleSlider.Value * 100)
-				loadedImage = image_manipulation.GrayscaleFilter(originalImage, intensity)
-			}
-
-			if applyContrastButton.Clicked(gtx) && originalImage != nil {
+			if applyBlurButton.Clicked(gtx) || applyGrayscaleButton.Clicked(gtx) || applyContrastButton.Clicked(gtx) {
+				blurIntensity := int(blurSlider.Value * 100)
+				grayscaleIntensity := int(grayscaleSlider.Value * 100)
 				contrastFactor := contrastSlider.Value * 100
-				loadedImage = image_manipulation.ContrastFilter(originalImage, float64(contrastFactor))
+				loadedImage = ApplyFilters(originalImage, blurIntensity, grayscaleIntensity, float64(contrastFactor))
 			}
 
 			layout.Flex{
