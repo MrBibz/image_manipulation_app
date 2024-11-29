@@ -54,7 +54,7 @@ func HandleSaveButtonClick(expl *explorer.Explorer, saveChan chan error, saveBtn
 	}
 }
 
-func ApplyFilters(img image.Image, blurIntensity int, grayscaleIntensity int, contrastFactor float64) image.Image {
+func ApplyFilters(img image.Image, blurIntensity int, grayscaleIntensity int, contrastFactor float64, rotationAngle int) image.Image {
 	if blurIntensity > 0 {
 		img = image_manipulation.BlurFilter(img, blurIntensity)
 	}
@@ -63,6 +63,9 @@ func ApplyFilters(img image.Image, blurIntensity int, grayscaleIntensity int, co
 	}
 	if contrastFactor != 0 {
 		img = image_manipulation.ContrastFilter(img, contrastFactor)
+	}
+	if rotationAngle != 0 {
+		img = image_manipulation.RotateImage(img, rotationAngle)
 	}
 	return img
 }

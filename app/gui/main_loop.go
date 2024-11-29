@@ -1,6 +1,7 @@
 package gui
 
 import (
+	"app/image_manipulation"
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/layout"
@@ -44,6 +45,9 @@ func MainLoop(w *app.Window) error {
 
 	var loadedImage image.Image
 	var originalImage image.Image
+	var blurIntensity, grayscaleIntensity int
+	var contrastFactor float64
+	var rotationAngle int
 
 	for {
 		e := w.Event()
@@ -66,6 +70,10 @@ func MainLoop(w *app.Window) error {
 						if err == nil {
 							loadedImage = img
 							originalImage = img
+							blurIntensity = 0
+							grayscaleIntensity = 0
+							contrastFactor = 0
+							rotationAngle = 0
 						}
 					}
 				}
@@ -84,11 +92,16 @@ func MainLoop(w *app.Window) error {
 				showContrastOptions = !showContrastOptions
 			}
 
+			if rotateButton.Clicked(gtx) {
+				rotationAngle = (rotationAngle + 90) % 360
+				loadedImage = image_manipulation.RotateImage(originalImage, rotationAngle)
+			}
+
 			if applyBlurButton.Clicked(gtx) || applyGrayscaleButton.Clicked(gtx) || applyContrastButton.Clicked(gtx) {
-				blurIntensity := int(blurSlider.Value * 100)
-				grayscaleIntensity := int(grayscaleSlider.Value * 100)
-				contrastFactor := contrastSlider.Value * 100
-				loadedImage = ApplyFilters(originalImage, blurIntensity, grayscaleIntensity, float64(contrastFactor))
+				blurIntensity = int(blurSlider.Value * 100)
+				grayscaleIntensity = int(grayscaleSlider.Value * 100)
+				contrastFactor = float64(contrastSlider.Value * 100)
+				loadedImage = ApplyFilters(originalImage, blurIntensity, grayscaleIntensity, contrastFactor, rotationAngle)
 			}
 
 			layout.Flex{
