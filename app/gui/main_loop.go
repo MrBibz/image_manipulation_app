@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"app/image_manipulation"
+	im "app/image_manipulation"
 	"fmt"
 	"gioui.org/app"
 	"gioui.org/layout"
@@ -20,12 +20,13 @@ import (
 func MainLoop(w *app.Window) error {
 	var openButton, saveButton widget.Clickable
 	var blurButton, grayscaleButton, contrastButton, rotateButton, resizeButton widget.Clickable
-	var blurSlider, grayscaleSlider, contrastSlider widget.Float
-	var applyBlurButton, applyGrayscaleButton, applyContrastButton widget.Clickable
+	var blurSlider, grayscaleSlider, contrastSlider, widthSlider, heightSlider widget.Float
+	var applyBlurButton, applyGrayscaleButton, applyContrastButton, applyResizeButton widget.Clickable
 
 	showBlurOptions := false
 	showGrayscaleOptions := false
 	showContrastOptions := false
+	showResizeOptions := false
 
 	openButtonTheme := material.NewTheme()
 	openButtonTheme.Palette.ContrastBg = color.NRGBA{R: 31, G: 206, B: 145, A: 255}
@@ -45,9 +46,7 @@ func MainLoop(w *app.Window) error {
 
 	var loadedImage image.Image
 	var originalImage image.Image
-	var blurIntensity, grayscaleIntensity int
-	var contrastFactor float64
-	var rotationAngle int
+	var manipulations []im.Manipulation
 
 	for {
 		e := w.Event()
@@ -68,12 +67,9 @@ func MainLoop(w *app.Window) error {
 						defer file.Close()
 						img, err := jpeg.Decode(file)
 						if err == nil {
-							loadedImage = img
 							originalImage = img
-							blurIntensity = 0
-							grayscaleIntensity = 0
-							contrastFactor = 0
-							rotationAngle = 0
+							loadedImage = originalImage
+							manipulations = nil
 						}
 					}
 				}
@@ -93,15 +89,37 @@ func MainLoop(w *app.Window) error {
 			}
 
 			if rotateButton.Clicked(gtx) {
-				rotationAngle = (rotationAngle + 90) % 360
-				loadedImage = image_manipulation.RotateImage(originalImage, rotationAngle)
+				manipulations = append(manipulations, im.Manipulation{Type: "rotate", Angle: 90})
+				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
-			if applyBlurButton.Clicked(gtx) || applyGrayscaleButton.Clicked(gtx) || applyContrastButton.Clicked(gtx) {
-				blurIntensity = int(blurSlider.Value * 100)
-				grayscaleIntensity = int(grayscaleSlider.Value * 100)
-				contrastFactor = float64(contrastSlider.Value * 100)
-				loadedImage = ApplyFilters(originalImage, blurIntensity, grayscaleIntensity, contrastFactor, rotationAngle)
+			if resizeButton.Clicked(gtx) {
+				showResizeOptions = !showResizeOptions
+			}
+
+			if applyBlurButton.Clicked(gtx) {
+				blurIntensity := int(blurSlider.Value * 5)
+				manipulations = append(manipulations, im.Manipulation{Type: "blur", Intensity: blurIntensity})
+				loadedImage = ApplyAllManipulations(originalImage, manipulations)
+			}
+
+			if applyGrayscaleButton.Clicked(gtx) {
+				grayscaleIntensity := int(grayscaleSlider.Value * 125)
+				manipulations = append(manipulations, im.Manipulation{Type: "grayscale", Intensity: grayscaleIntensity})
+				loadedImage = ApplyAllManipulations(originalImage, manipulations)
+			}
+
+			if applyContrastButton.Clicked(gtx) {
+				contrastFactor := float64(contrastSlider.Value * 200)
+				manipulations = append(manipulations, im.Manipulation{Type: "contrast", Factor: contrastFactor})
+				loadedImage = ApplyAllManipulations(originalImage, manipulations)
+			}
+
+			if applyResizeButton.Clicked(gtx) {
+				newWidth := int(widthSlider.Value * 1000)
+				newHeight := int(heightSlider.Value * 1000)
+				manipulations = append(manipulations, im.Manipulation{Type: "resize", NewWidth: newWidth, NewHeight: newHeight})
+				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
 			layout.Flex{
@@ -296,6 +314,72 @@ func MainLoop(w *app.Window) error {
 									Right:  unit.Dp(25),
 								}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
 									return material.Button(actionButtonsTheme, &applyContrastButton, "Apply contrast").Layout(gtx)
+								})
+							}),
+						)
+					}
+					return layout.Dimensions{}
+				}),
+				layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+					if showResizeOptions {
+						return layout.Flex{
+							Axis:    layout.Vertical,
+							Spacing: layout.SpaceEvenly,
+						}.Layout(gtx,
+							layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+								return layout.Inset{
+									Top:    unit.Dp(10),
+									Bottom: unit.Dp(10),
+									Left:   unit.Dp(25),
+									Right:  unit.Dp(25),
+								}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+									return layout.Flex{
+										Axis: layout.Horizontal,
+									}.Layout(gtx,
+										layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+											return material.Slider(actionButtonsTheme, &widthSlider).Layout(gtx)
+										}),
+										layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+											return layout.Inset{
+												Left: unit.Dp(10),
+											}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+												return material.Label(actionButtonsTheme, unit.Sp(16), fmt.Sprintf("Width: %.0f", widthSlider.Value*1000)).Layout(gtx)
+											})
+										}),
+									)
+								})
+							}),
+							layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+								return layout.Inset{
+									Top:    unit.Dp(10),
+									Bottom: unit.Dp(10),
+									Left:   unit.Dp(25),
+									Right:  unit.Dp(25),
+								}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+									return layout.Flex{
+										Axis: layout.Horizontal,
+									}.Layout(gtx,
+										layout.Flexed(1, func(gtx layout.Context) layout.Dimensions {
+											return material.Slider(actionButtonsTheme, &heightSlider).Layout(gtx)
+										}),
+										layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+											return layout.Inset{
+												Left: unit.Dp(10),
+											}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+												return material.Label(actionButtonsTheme, unit.Sp(16), fmt.Sprintf("Height: %.0f", heightSlider.Value*1000)).Layout(gtx)
+											})
+										}),
+									)
+								})
+							}),
+							layout.Rigid(func(gtx layout.Context) layout.Dimensions {
+								return layout.Inset{
+									Top:    unit.Dp(10),
+									Bottom: unit.Dp(10),
+									Left:   unit.Dp(25),
+									Right:  unit.Dp(25),
+								}.Layout(gtx, func(gtx layout.Context) layout.Dimensions {
+									return material.Button(actionButtonsTheme, &applyResizeButton, "Apply Resize").Layout(gtx)
 								})
 							}),
 						)

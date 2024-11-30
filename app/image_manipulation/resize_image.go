@@ -7,14 +7,8 @@ import (
 	"time"
 )
 
-func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
+func ResizeImage(img image.Image, newWidth, newHeight int) image.Image {
 	start := time.Now()
-
-	// Ensure the output directory exists
-	if err := EnsureOutputDir(outputsPath); err != nil {
-		fmt.Println(err)
-		return
-	}
 
 	// Original image dimensions
 	originalWidth, originalHeight := GetImageDimensions(img)
@@ -61,19 +55,6 @@ func ResizeImage(img image.Image, newWidth, newHeight int, outputsPath string) {
 		}
 	}
 
-	// Create the output file
-	outputFile, err := CreateOutputFile(outputsPath)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	// Encode the resized image as JPEG and save it to the output file
-	if err := SaveImageAsJPEG(outputFile, resizedImage); err != nil {
-		fmt.Println(err)
-		return
-	}
-
-	fmt.Println("Resized image saved to : ", outputsPath)
 	fmt.Println("Execution time : ", time.Since(start))
+	return resizedImage
 }

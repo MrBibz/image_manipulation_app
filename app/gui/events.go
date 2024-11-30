@@ -1,7 +1,7 @@
 package gui
 
 import (
-	"app/image_manipulation"
+	im "app/image_manipulation"
 	"fmt"
 	"gioui.org/layout"
 	"gioui.org/widget"
@@ -56,16 +56,35 @@ func HandleSaveButtonClick(expl *explorer.Explorer, saveChan chan error, saveBtn
 
 func ApplyFilters(img image.Image, blurIntensity int, grayscaleIntensity int, contrastFactor float64, rotationAngle int) image.Image {
 	if blurIntensity > 0 {
-		img = image_manipulation.BlurFilter(img, blurIntensity)
+		img = im.BlurFilter(img, blurIntensity)
 	}
 	if grayscaleIntensity > 0 {
-		img = image_manipulation.GrayscaleFilter(img, grayscaleIntensity)
+		img = im.GrayscaleFilter(img, grayscaleIntensity)
 	}
 	if contrastFactor != 0 {
-		img = image_manipulation.ContrastFilter(img, contrastFactor)
+		img = im.ContrastFilter(img, contrastFactor)
 	}
 	if rotationAngle != 0 {
-		img = image_manipulation.RotateImage(img, rotationAngle)
+		img = im.RotateImage(img, rotationAngle)
+	}
+	return img
+}
+
+func ApplyAllManipulations(originalImage image.Image, manipulations []im.Manipulation) image.Image {
+	img := originalImage
+	for _, manipulation := range manipulations {
+		switch manipulation.Type {
+		case "blur":
+			img = im.BlurFilter(img, manipulation.Intensity)
+		case "grayscale":
+			img = im.GrayscaleFilter(img, manipulation.Intensity)
+		case "contrast":
+			img = im.ContrastFilter(img, manipulation.Factor)
+		case "rotate":
+			img = im.RotateImage(img, manipulation.Angle)
+		case "resize":
+			img = im.ResizeImage(img, manipulation.NewWidth, manipulation.NewHeight)
+		}
 	}
 	return img
 }
