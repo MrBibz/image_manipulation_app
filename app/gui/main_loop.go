@@ -99,26 +99,30 @@ func MainLoop(w *app.Window) error {
 
 			if applyBlurButton.Clicked(gtx) {
 				blurIntensity := int(blurSlider.Value * 5)
-				manipulations = append(manipulations, im.Manipulation{Type: "blur", Intensity: blurIntensity})
+				newManipulation := im.Manipulation{Type: "blur", Intensity: blurIntensity}
+				manipulations = AddOrReplaceManipulation(manipulations, newManipulation)
 				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
 			if applyGrayscaleButton.Clicked(gtx) {
 				grayscaleIntensity := int(grayscaleSlider.Value * 125)
-				manipulations = append(manipulations, im.Manipulation{Type: "grayscale", Intensity: grayscaleIntensity})
+				newManipulation := im.Manipulation{Type: "grayscale", Intensity: grayscaleIntensity}
+				manipulations = AddOrReplaceManipulation(manipulations, newManipulation)
 				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
 			if applyContrastButton.Clicked(gtx) {
 				contrastFactor := float64(contrastSlider.Value * 200)
-				manipulations = append(manipulations, im.Manipulation{Type: "contrast", Factor: contrastFactor})
+				newManipulation := im.Manipulation{Type: "contrast", Factor: contrastFactor}
+				manipulations = AddOrReplaceManipulation(manipulations, newManipulation)
 				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
 			if applyResizeButton.Clicked(gtx) {
 				newWidth := int(widthSlider.Value * 1000)
 				newHeight := int(heightSlider.Value * 1000)
-				manipulations = append(manipulations, im.Manipulation{Type: "resize", NewWidth: newWidth, NewHeight: newHeight})
+				newManipulation := im.Manipulation{Type: "resize", NewWidth: newWidth, NewHeight: newHeight}
+				manipulations = AddOrReplaceManipulation(manipulations, newManipulation)
 				loadedImage = ApplyAllManipulations(originalImage, manipulations)
 			}
 
@@ -391,4 +395,14 @@ func MainLoop(w *app.Window) error {
 			typ.Frame(gtx.Ops)
 		}
 	}
+}
+
+func AddOrReplaceManipulation(manipulations []im.Manipulation, newManipulation im.Manipulation) []im.Manipulation {
+	for i, manipulation := range manipulations {
+		if manipulation.Type == newManipulation.Type {
+			manipulations[i] = newManipulation
+			return manipulations
+		}
+	}
+	return append(manipulations, newManipulation)
 }
