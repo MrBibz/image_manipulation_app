@@ -396,13 +396,3 @@ func MainLoop(w *app.Window) error {
 		}
 	}
 }
-
-func AddOrReplaceManipulation(manipulations []im.Manipulation, newManipulation im.Manipulation) []im.Manipulation {
-	for i, manipulation := range manipulations {
-		if manipulation.Type == newManipulation.Type {
-			manipulations[i] = newManipulation
-			return manipulations
-		}
-	}
-	return append(manipulations, newManipulation)
-}

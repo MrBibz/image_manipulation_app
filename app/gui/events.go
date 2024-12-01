@@ -72,3 +72,13 @@ func ApplyAllManipulations(originalImage image.Image, manipulations []im.Manipul
 	}
 	return img
 }
+
+func AddOrReplaceManipulation(manipulations []im.Manipulation, newManipulation im.Manipulation) []im.Manipulation {
+	for i, manipulation := range manipulations {
+		if manipulation.Type == newManipulation.Type {
+			manipulations[i] = newManipulation
+			return manipulations
+		}
+	}
+	return append(manipulations, newManipulation)
+}
